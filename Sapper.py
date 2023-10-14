@@ -3,9 +3,13 @@ import emoji
 
 class Field:
   def __init__(self, x, y):
+    self.numbers = {0:emoji.emojize(":keycap_0:"), 1:emoji.emojize(":keycap_1:"), 2:emoji.emojize(":keycap_2:"),
+                    3:emoji.emojize(":keycap_3:"), 4:emoji.emojize(":keycap_4:"), 5:emoji.emojize(":keycap_5:"),
+                    6:emoji.emojize(":keycap_6:"), 7:emoji.emojize(":keycap_7:"), 8:emoji.emojize(":keycap_8:"),
+                    9:emoji.emojize(":keycap_9:")}
     self.x=x
     self.y=y
-    self.field = [['X']*self.x for j in range(self.y)]
+    self.field = [[emoji.emojize(":blue_square:")]*self.x for j in range(self.y)]
     self.alive=True
     self.bombs=[]
     self.find_bombs=0
@@ -16,29 +20,29 @@ class Field:
       if (x, y) not in self.bombs:
         self.bombs.append((x,y))
   def print_field(self):
-    print('\\ x', ' ',*range(1, self.x+1), sep=' ')
+    print('\\ x',*[self.numbers[i] for i in range(1, self.x+1)])
     print('y\\')
     for i in range(1, len(self.field)+1):
+      temp=''
+      for j in range(len(self.field[i-1])):
+        temp+=self.field[i-1][j]
+      print(str(self.numbers[i]).rjust(3),' ', temp)
+  def print_field_with_bombs(self):
+    print('\\ x',*[self.numbers[i] for i in range(1, self.x+1)])
+    print('y\\')
+    for i in range(1,len(self.field)+1):
       temp=[]
       for j in range(len(self.field[i-1])):
-        temp.append(' '*(len(str(j))-1) + self.field[i-1][j])
-      print(str(i).rjust(3),' ', *temp)
-  def print_field_with_bombs(self):
-    print('\\ x',' ', *range(1, self.x+1), sep=' ')
-    print('y\\')
-    for i in range(len(self.field)):
-      temp=[str(i+1).rjust(3), ' ',]
-      for j in range(len(self.field[i])):
-        if (j, i) in self.bombs:
-          temp.append(' '*(len(str(j))-1)+'*')
+        if (j, i-1) in self.bombs:
+          temp.append(emoji.emojize('💥').strip())
         else:
-          temp.append(' '*(len(str(j))-1)+'O')
-      print(*temp)
+          temp.append(emoji.emojize(":stop_button:")+' ')
+      print(str(self.numbers[i]).rjust(3),'   ', *temp, sep='')
   def empty_count(self):
     c = 0
     for i in self.field:
       for j in i:
-        if j == 'X':
+        if j == emoji.emojize(":blue_square:"):
           c+=1
     return c
 def correct_num(num, a, b):
@@ -93,9 +97,9 @@ while field.alive and field.find_bombs!=n_bombs and field.empty_count()!=n_bombs
     for y in range(len(field.field)):
       for x in range(len(field.field[y])):
         if x in range(step[0]-1, step[0]+2) and y in range(step[1]-1, step[1]+2) and field.empty_count()!=0 and field.empty_count()!=len(field.bombs):
-          field.field[y][x]='O'
+          field.field[y][x]=emoji.emojize(":stop_button:")
           if (x, y) in field.bombs:
-            field.field[y][x]='*'
+            field.field[y][x]=emoji.emojize(":bomb:")
             field.find_bombs+=1
     field.print_field()
     print(f'Найденных мин: {field.find_bombs}. Осталось обнаружить {n_bombs-field.find_bombs}.')
