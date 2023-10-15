@@ -57,8 +57,17 @@ class Field:
         if j == emoji.emojize(":blue_square:"):
           c+=1
     return c
-  
-  
+  def open_cells(self, x, y):
+    for j in range(len(self.field)):
+      for i in range(len(self.field[y])):
+        if i in range(x-1, x+2) and j in range(y-1, y+2):
+          if (i, j) in self.bombs and (i, j) not in self.find_bombs:
+            self.find_bombs.append((i, j))
+            self.field[j][i]=emoji.emojize(':bomb:')
+            self.open_cells(i,j)
+          elif (i, j) not in self.find_bombs:
+            self.field[j][i]=emoji.emojize(":stop_button:")+' '
+
 def correct_num(num, a, b):
   try:
     num=int(num)
@@ -109,15 +118,7 @@ while field.alive and len(field.find_bombs)!=n_bombs and field.empty_count()!=n_
     print("Вы проиграли!")
     field.alive = False
   else:
-    for y in range(len(field.field)):
-      for x in range(len(field.field[y])):
-        if x in range(step[0]-1, step[0]+2) and y in range(step[1]-1, step[1]+2) and field.empty_count()!=0 and field.empty_count()!=len(field.bombs):
-          if (x, y) in field.bombs:
-            field.field[y][x]=emoji.emojize(":bomb:")
-            if (x,y) not in field.find_bombs:
-              field.find_bombs.append((x,y))
-          else:
-            field.field[y][x]=emoji.emojize(":stop_button:")+" "
+    field.open_cells(step[0],step[1])
     field.print_field()
     print(f'Найденных мин: {len(field.find_bombs)}. Осталось обнаружить {n_bombs-len(field.find_bombs)}.')
 if len(field.find_bombs)==n_bombs or field.empty_count()==n_bombs-len(field.find_bombs):
