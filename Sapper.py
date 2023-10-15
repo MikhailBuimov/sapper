@@ -13,6 +13,18 @@ class Field:
     self.alive=True
     self.bombs=[]
     self.find_bombs=[]
+  @staticmethod
+  def num_to_emoji_num(num):
+    numbers = {0:emoji.emojize(":keycap_0:"), 1:emoji.emojize(":keycap_1:"), 2:emoji.emojize(":keycap_2:"),
+                    3:emoji.emojize(":keycap_3:"), 4:emoji.emojize(":keycap_4:"), 5:emoji.emojize(":keycap_5:"),
+                    6:emoji.emojize(":keycap_6:"), 7:emoji.emojize(":keycap_7:"), 8:emoji.emojize(":keycap_8:"),
+                    9:emoji.emojize(":keycap_9:")}
+    res = []
+    while num:
+      digit = num % 10
+      res.append(numbers[digit])
+      num=num//10
+    return ' '.join(reversed(res))
   def fill_bombs(self, n):
     while n != len(self.bombs):
       x = random.choice(range(self.x))
@@ -20,15 +32,15 @@ class Field:
       if (x, y) not in self.bombs:
         self.bombs.append((x,y))
   def print_field(self):
-    print('\\ x',*[self.numbers[i] for i in range(1, self.x+1)])
+    print('\\ x',*[Field.num_to_emoji_num(i) for i in range(1, self.x+1)])
     print('y\\')
     for i in range(1, len(self.field)+1):
       temp=[]
       for j in range(len(self.field[i-1])):
         temp.append(self.field[i-1][j])
-      print(str(self.numbers[i]).rjust(3)+'   ',*temp, sep='')
+      print(str(Field.num_to_emoji_num(i)).rjust(3)+'   ',*temp, sep='') 
   def print_field_with_bombs(self):
-    print('\\ x',*[self.numbers[i] for i in range(1, self.x+1)])
+    print('\\ x',*[Field.num_to_emoji_num(i) for i in range(1, self.x+1)])
     print('y\\')
     for i in range(1,len(self.field)+1):
       temp=[]
@@ -37,7 +49,7 @@ class Field:
           temp.append(emoji.emojize(':bomb:').strip())
         else:
           temp.append(emoji.emojize(":stop_button:")+' ')
-      print(str(self.numbers[i]).rjust(3),'   ', *temp, sep='')
+      print(str(Field.num_to_emoji_num(i)).rjust(3),'   ', *temp, sep='')
   def empty_count(self):
     c = 0
     for i in self.field:
@@ -45,6 +57,8 @@ class Field:
         if j == emoji.emojize(":blue_square:"):
           c+=1
     return c
+  
+  
 def correct_num(num, a, b):
   try:
     num=int(num)
@@ -59,6 +73,7 @@ def correct_step(step, x, y):
   except:
     return False
   return f in range(1, x+2) and s in range(1, y+2)
+
 
 x = input("Задаем ширину игрового поля. Введите число от 2 до 100:")
 while not correct_num(x, 2, 100):
