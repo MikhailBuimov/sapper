@@ -1,6 +1,5 @@
 import random
 import emoji
-from wcwidth import wcswidth
 
 
 class Field:
@@ -40,14 +39,15 @@ class Field:
     max_x = max(len(item) for item in self.x_axies)
     max_y = max(len(item) for item in self.y_axies)
 
-    print('\\ x'+' '*(max_x-1), *[el.ljust(max_x+1, ' ') for el in self.x_axies])
+    print('\\ x'.ljust((max(max_x, 3) - min(max_x, 3)) // 2 + 3,' '),
+           *[el.ljust((max(max_x, len(el)) - min(max_x, len(el))) // 2 + len(el) + 1, ' ') for el in self.x_axies])
     print('y\\')
 
     for i in range(1, len(self.field) + 1):
       current = self.y_axies[i - 1]
       formula = (max(max_y, len(current)) - min(max_y, len(current))) // 2 + len(current)
       y_label = str(current).ljust(formula, ' ')
-      field_row = [el.ljust(max_x-1, ' ') for el in self.field[i - 1]]
+      field_row = [el.ljust((max(max_x, len(el)) - min(max_x, len(el))) // 2 + len(el) - 1, ' ') for el in self.field[i - 1]]
       print(y_label, ' ', *field_row)
 
 
