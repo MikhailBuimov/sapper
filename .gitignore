@@ -1,3 +1,5 @@
 *.[oa]
 *~
 test_emoji.py
+.gitignore
+.gitignore.save
